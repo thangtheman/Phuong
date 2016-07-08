@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook login</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<script>
+    ( function( d, s, id ) {
+        var js, fjs = d.getElementsByTagName( s )[ 0 ];
+        if ( d.getElementById( id ) ) return;
+        js = d.createElement( s );
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        fjs.parentNode.insertBefore( js, fjs );
+    } ( document, 'script', 'facebook-jssdk' ) );
+
+    window.fbAsyncInit = function(){
+        FB.init({
+            appId      : '680602478761002',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v2.3'
+        });
+    }
+
+    // checks fb login status
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+
+
+</script>
+
+<style>
+    .facebook{
+        background-color: blue;
+        padding: 10px;
+        color: white;
+    }
+</style>
+<button class="facebook" onclick="FB.login(loginCB,  {
+			scope: 'public_profile,email'
+		})">Log In With FaceBook</button>
+
+<div class="col-xs-12  col-sm-6  col-md-6 border-right">
+    <h3>Register for your free account</h3>
+    <p>Create account in seconds!</p>
+
+
+    <label>Name</label>
+    <input data-val="true" data-val-required="Please enter your full name." id="Name" name="Name" type="text" value="" />
+
+    <label>Email Address</label>
+
+    <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="Email" name="Email" type="email" value="" />
+    <label>Password</label>
+    <input data-val="true" data-val-length="The password must be at least 6 characters long." data-val-length-max="100" data-val-length-min="6" data-val-required="This field is required." id="Password" name="Password" type="password" />
+    <input id="AuthProvider" name="AuthProvider" type="hidden" value="" />
+    <input id="Authkey" name="Authkey" type="hidden" value="" />
+    <input id="AuthResponse" name="AuthResponse" type="hidden" value="" />
+
+    <label>Confirm Password</label>
+    <input data-val="true" data-val-equalto="The confirm password does not match. Please try again." data-val-equalto-other="*.Password" data-val-required="This field is required." id="ConfirmPassword" name="ConfirmPassword" type="password" />
+
+
+
+
+    <input type="submit" value="Create Account" />
+</div>
+
+<script>
+
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    //fires after login is checked on page load
+    function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response);
+        if (response.status === 'connected') {
+            //already logged in
+        } else if (response.status === 'not_authorized') {
+            // The person is logged into Facebook, but not your app.
+        } else {
+            // The person is not logged into Facebook, so we're not sure if
+            // they are logged into this app or not.
+        }
+    }
+
+    //fires after button is used
+    var loginCB = function(response){
+        console.log('loginCallback');
+        console.log(response);
+        if (response.status === 'connected') {
+            FB.api('/me?fields=id,email,name', function(fbResponse){
+                console.log('fb graph',fbResponse);
+                if (fbResponse && !fbResponse.error) {
+
+                    document.getElementById("Name").value =fbResponse.name;
+                    document.getElementById("Email").value=fbResponse.email;
+
+
+                }
+            })
+
+
+
+
+        } else if (response.status === 'not_authorized') {
+            // The person is logged into Facebook, but not your app.
+        } else {
+            // The person is not logged into Facebook, so we're not sure if
+            // they are logged into this app or not.
+        }
+    };
+</script>
+</body>
+</html>

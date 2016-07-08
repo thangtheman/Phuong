@@ -117,5 +117,118 @@
     } );
 </script>
 
+<script>
+
+    /**
+     * Handler for the signin callback triggered after the user selects an account.
+     */
+    function onSignInCallback(resp) {
+
+        $("#AuthResponse").val(JSON.stringify({
+            access_token: resp.access_token,
+            client_id: resp.client_id,
+            id_token: resp.id_token,
+            code: resp.code
+        }));
+
+        $("#Authkey").val(resp.access_token);
+        gapi.client.load('plus', 'v1', apiClientLoaded);
+    }
+
+    /**
+     * Sets up an API call after the Google API client loads.
+     */
+    function apiClientLoaded() {
+        gapi.client.plus.people.get({ userId: 'me' }).execute(handleEmailResponse);
+    }
+
+    /**
+     * Response callback for when the API client receives a response.
+     *
+     */
+    function handleEmailResponse(resp) {
+
+        $("#AuthProvider").val("GOOGLE");
+        $("#sociallogos").hide();
+
+        $("#Email").attr('readonly', true);
+
+        $("#socialshowgoogle").show();
+
+        $('#Email').addClass('input-disabled');
+
+        var primaryEmail = null;
+
+        for (var i = 0; i < resp.emails.length; i++) {
+            if (resp.emails[i].type === 'account') primaryEmail = resp.emails[i].value;
+        }
+
+        $("#Name").val(resp.displayName);
+
+        $("#Email").val(primaryEmail);
+
+
+
+    }
+
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '536959843170749', // App ID
+            status: true, // check login status
+            cookie: true, // enable cookies to allow the server to access the session
+            xfbml: true // parse XFBML
+
+        });
+    };
+    // Load the SDK Asynchronously
+    (function (d) {
+
+        var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement('script');
+        js.id = id;
+        js.async = true;
+        js.src = "//connect.facebook.net/en_US/all.js";
+        ref.parentNode.insertBefore(js, ref);
+    }(document));
+
+    function fb_login() {
+        FB.login(function (response) {
+            if (response.authResponse) {
+
+                $("#AuthResponse").val(JSON.stringify(response));
+                $("#AuthProvider").val("FACEBOOK");
+                $("#Authkey").val(response.authResponse.accessToken);
+
+                FB.api('/me?fields=id,email,name', function (response) {
+
+                    $("#sociallogos").hide();
+
+                    $("#socialshowfb").show();
+
+
+                    $('#Email').addClass('input-disabled');
+
+                    $("#Name").val(response.name);
+                    $("#Email").val(response.email);
+                    $("#Email").attr('readonly', true);
+
+                    $('#Email').addClass('input-disabled');
+
+                });
+
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+            }
+        }, {
+            scope: 'email'
+        });
+    }
+
+
+</script>
+
 </body>
 </html>
