@@ -40,7 +40,7 @@
     }
 </style>
 <button class="facebook" onclick="FB.login(loginCB,  {
-			scope: 'public_profile,email'
+			scope: 'public_profile,email, user_birthday, user_hometown, user_relationships, user_location'
 		})">Log In With FaceBook</button>
 
 <div class="col-xs-12  col-sm-6  col-md-6 border-right">
@@ -52,8 +52,20 @@
     <input data-val="true" data-val-required="Please enter your full name." id="Name" name="Name" type="text" value="" />
 
     <label>Email Address</label>
-
     <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="Email" name="Email" type="email" value="" />
+
+    <label>Age Range: Minimum</label>
+    <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="bod" name="Email" type="text" value="" />
+
+    <label>Relationship Status</label>
+    <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="sta" name="Email" type="text" value="" />
+
+    <label>Location</label>
+    <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="location" name="Email" type="text" value="" />
+
+    <label>HomeTown</label>
+    <input data-val="true" data-val-email="Please enter a valid email." data-val-required="Please enter a valid email." id="ht" name="Email" type="text" value="" />
+
     <label>Password</label>
     <input data-val="true" data-val-length="The password must be at least 6 characters long." data-val-length-max="100" data-val-length-min="6" data-val-required="This field is required." id="Password" name="Password" type="password" />
     <input id="AuthProvider" name="AuthProvider" type="hidden" value="" />
@@ -97,12 +109,16 @@
         console.log('loginCallback');
         console.log(response);
         if (response.status === 'connected') {
-            FB.api('/me?fields=id,email,name', function(fbResponse){
+            FB.api('/me?fields=id,email,name,relationship_status, age_range, location, hometown', function(fbResponse){
                 console.log('fb graph',fbResponse);
                 if (fbResponse && !fbResponse.error) {
 
                     document.getElementById("Name").value =fbResponse.name;
                     document.getElementById("Email").value=fbResponse.email;
+                    document.getElementById("sta").value=fbResponse.relationship_status;
+                    document.getElementById("bod").value=fbResponse.age_range.min;
+                    document.getElementById("location").value=fbResponse.location.name;
+                    document.getElementById("ht").value=fbResponse.hometown.name;
 
 
                 }
