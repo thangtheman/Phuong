@@ -81,17 +81,19 @@
     // successful.  See statusChangeCallback() for when this call is made.
     function testAPI() {
         console.log('Welcome!  Fetching your information.... ');
-        FB.api('/me', function(response) {
+        FB.api('/me',{fields: 'name,email'}, function(response) {
             console.log('Successful login for: ' + response.name);
-            console.log('Your Email is: ' + response.email);
+            console.log('Your email is: : ' + response.email);
             document.getElementById('status').innerHTML =
-                    'Thanks for logging in, ' + response.name + '!';
-        });
+                    'Thanks for logging in, ' + response.name + '!' + ' Your Email is ' + response.email +' '+ response.id +' '+ response.hometown;
+
+            FB.api('me',
+                    function(response){
+                        console.log(response.email);
+                    });
+        },{'scope':'email'});
     }
-    FB.login(function(){
-        // Note: The call will only work if you accept the permission request
-        FB.api('/me/feed', 'post', {message: 'Hello, world!'});
-    }, {scope: 'publish_actions'});
+
 </script>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
@@ -107,6 +109,13 @@
 
 <div id="status">
 </div>
+<script>
+    FB.getLoginStatus(function(response) {
+        if (response.status === 'connected') {
+            var accessToken = response.authResponse.accessToken;
+        }
+    } );
+</script>
 
 </body>
 </html>

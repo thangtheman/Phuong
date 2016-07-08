@@ -1,25 +1,22 @@
-<?php
+$facebook = new Facebook(array('appId'  => YOUR_FACEBOOK_APP_ID,'secret' => YOUR_FACEBOOK_SECRET_KEY,'cookie' => true,'domain' => YOUR_APPLICATION_HOST_DOMAIN));
 
-require 'fb/facebook.php';
-
-$facebook = new Facebook(array(
-    'appId'  => '680602478761002',
-    'secret' => 'b877b073f9c2fa99175cceead50bcee6',
-));
-
-// See if there is a user from a cookie
-$user = $facebook->getUser();
-
-if ($user) {
-    try {
-        // Proceed knowing you have a logged in user who's authenticated.
-        $user_profile = $facebook->api('/me');
-        $logoutUrl = $facebook->getLogoutUrl();
-    } catch (FacebookApiException $e) {
-        $user = null;
-    }
-} else {
-    $loginUrl = $facebook->getLoginUrl();
+$session = $facebook->getSession();
+if (!$session)
+{
+$wanted_permissions='email';
+$url = $facebook->getLoginUrl(array('canvas' => 1,'fbconnect' => 0,'req_perms'=>$wanted_permissions));
+echo "<script type='text/javascript'>top.location.href = '$url';</script>";
 }
-
-?>
+else
+{
+try
+{
+$fbID = $facebook->getUser();
+$me = $facebook->api('/me');
+$email=$me['email'];
+}
+catch (Exception $e)
+{
+echo $e->getMessage();
+}
+}
